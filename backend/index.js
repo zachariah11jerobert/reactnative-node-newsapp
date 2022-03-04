@@ -1,16 +1,10 @@
-const express=require('express');
+const express = require("express");
 const app = express();
-const News = require('./news/news');
+const newsRouter = require("./routers/news");
 
-app.use(express.static('public'));
+app.use(express.static("public"));
+app.use('/api',newsRouter);
 
-
-
-app.get('/',(req,res)=>{
-    res.send('<h1>Hello from server.</h1>');
+app.listen(3000, () => {
+  console.log("Port is Listening.");
 });
-
-
-app.listen(3000,()=>{
-    console.log('Port is Listing.');
-})

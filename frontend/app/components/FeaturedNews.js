@@ -9,3 +9,4 @@ const FeaturedNews = ({ item }) => {
 export default FeaturedNews;
 
 const styles = StyleSheet.create({});
+

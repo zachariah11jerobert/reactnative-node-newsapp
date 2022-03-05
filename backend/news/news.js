@@ -22,10 +22,13 @@ class News {
   }
 
   async create(data, id, thumbnail) {
-    const totalData = await this.getAll();
+    const totalData = JSON.parse(await fs.promises.readFile(this.path));
+    const { content } = data;
+    const desc = content.substr(0, 100) + "...";
     totalData.push({
       ...data,
       id,
+      desc,
       thumbnail: `http://localhost:3000/${thumbnail}`,
     });
 
@@ -33,11 +36,12 @@ class News {
   }
 
   async getAll() {
-    return JSON.parse(await fs.promises.readFile(this.path));
+    const data = JSON.parse(await fs.promises.readFile(this.path));
+    return data.filter((news) => delete news.content);
   }
 
   async getSingle(id) {
-    const data = await this.getAll();
+    const data = JSON.parse(await fs.promises.readFile(this.path));
     return data.find((news) => news.id === id);
   }
 

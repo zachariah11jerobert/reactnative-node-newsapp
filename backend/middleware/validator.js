@@ -12,16 +12,28 @@ const validator = [
   check("category").isIn(exceptedCategory).withMessage("Title is required"),
 ];
 
+const result = (req, res, next) => {
+  const result = validationResult(req);
+  const hasError = !result.isEmpty();
+
+  if (hasError) {
+    const error = result.array()[0].msg;
+    res.json({ success: false, message: error });
+  }
+
+  next();
+};
+
 const validateFile = (req, res, next) => {
   const exceptedFileType = ["png", "jpg", "jpeg"];
 
   if (!req.file) {
-    res.json({ success: false, message: "Image is required" });
+    return res.json({ success: false, message: "Image is required!" });
   }
 
-  const fileExtension = req.file.mimetype.split('/').pop();
-  if(!exceptedFileType.includes(fileExtension)){
-    res.json({ success: false, message: "Image is required" });
+  const fileExtension = req.file.mimetype.split("/").pop();
+  if (!exceptedFileType.includes(fileExtension)) {
+    return res.json({ success: false, message: "Image file is not valid!" });
   }
 
   next();

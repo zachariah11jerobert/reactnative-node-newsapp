@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const sharp = require("sharp");
 const multer = require("multer");
 const News = require("../news/news");
+const imageProcess = require("../util/ImageProcess");
 
 const storage = multer.memoryStorage();
 const uploads = multer({ storage });
@@ -20,19 +20,13 @@ const result = (req, res, next) => {
 };
 
 router.post("/create", uploads.single("thumbnail"), async (req, res) => {
-  console.log("file", req.file);
-  console.log("body", req.body);
-  fs.access("./data/uploads", (err) => {
-    if (err) {
-      fs.mkdirSync("./data/uploads");
-    }
-  });
-  const id = new News().createId();
-  const formatedName = req.file.originalname.split(" ").join("-");
-  const fileName = `${id}-${formatedName}`;
-  await sharp(req.file.buffer)
-    .resize({ width: 615, height: 350 })
-    .toFile("./data/uploads/" + req.file.originalname);
+  // console.log("file", req.file);
+  // console.log("body", req.body);
+
+  const news = new News();
+  const id = news.createId();
+  const imageName = await imageProcess(req, id);
+  news.create(req.body, id, imageName);
   res.send("submit successful !!!");
 });
 

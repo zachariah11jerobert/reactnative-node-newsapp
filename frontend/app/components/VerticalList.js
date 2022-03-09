@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import FlatCard from "./FlatCard";
 import Title from "./Title";
+import VerticalCard from "./VerticalCard";
 
 const VerticalList = ({ title, data }) => {
   return (
@@ -9,7 +9,7 @@ const VerticalList = ({ title, data }) => {
       <Title>{title}</Title>
       <View style={styles.container}>
         {data.map((item) => (
-          <FlatCard item={item} key={item.id} />
+          <VerticalCard item={item} key={item.id} />
         ))}
       </View>
     </View>

@@ -56,11 +56,19 @@ const getSingleNews = async (req, res) => {
 
 const getNewsByCategory = async (req, res) => {
   try {
-    const data = await news.getByCategory(req.params.category);
+    const { category, qty } = req.params;
+    const data = await news.getByCategory(category);
     if (!data) {
       return res.json({
         success: false,
         message: "Post not found!",
+      });
+    }
+
+    if (qty) {
+      return res.json({
+        success: true,
+        news: [...data].splice(0, qty),
       });
     }
 
@@ -77,9 +85,25 @@ const getNewsByCategory = async (req, res) => {
   }
 };
 
+const searchPosts = async (req, res) => {
+  try {
+    const response = await news.searchPosts(req.params.query);
+    if (response.length === 0)
+      return res.json({ success: false, message: "No match found.." });
+    res.json({ success: true, news: response });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: "Something went wrong, server error!",
+    });
+    console.log(error);
+  }
+};
+
 module.exports = {
   createNews,
   getAllNews,
   getSingleNews,
-  getNewsByCategory
+  getNewsByCategory,
+  searchPosts,
 };

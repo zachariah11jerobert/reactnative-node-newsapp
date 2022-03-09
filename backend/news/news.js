@@ -29,7 +29,7 @@ class News {
       ...data,
       id,
       desc,
-      thumbnail: `http://localhost:3000/${thumbnail}`,
+      thumbnail: `http:/192.168.1.4:3000/${thumbnail}`,
     });
 
     await fs.promises.writeFile(this.path, JSON.stringify(totalData, null, 2));
@@ -38,6 +38,17 @@ class News {
   async getAll() {
     const data = JSON.parse(await fs.promises.readFile(this.path));
     return data.filter((news) => delete news.content);
+  }
+
+  async searchPosts(query) {
+    try {
+      const data = await this.getAll();
+      return data.filter((news) =>
+        news.title.toLowerCase().includes(query.toLowerCase())
+      );
+    } catch (error) {
+      console.log("Error while searching post.");
+    }
   }
 
   async getSingle(id) {

@@ -20,6 +20,7 @@ router.post(
 
 router.get("/news", getAllNews);
 router.get("/news/single/:id", getSingleNews);
-router.get("/news/:category", getNewsByCategory);
+router.get("/news/:category/:qty?", getNewsByCategory);
+router.get("/news/search/:query", searchPosts);
 
 module.exports = router;

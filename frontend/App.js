@@ -1,33 +1,58 @@
-import React from "react";
-import BreakingNews from "./app/components/BreakingNews";
-import EntertainmentNews from "./app/components/EntertainmentNews";
-import FeaturedNews from "./app/components/FeaturedNews";
-import PoliticalNews from "./app/components/PoliticalNews";
+import React, { useState, useEffect } from "react";
+
+import newsApi from "./app/api/newApi";
+
 import Screen from "./app/components/Screen";
 import SearchBar from "./app/components/SearchBar";
+import FeaturedNews from "./app/components/FeaturedNews";
+import BreakingNews from "./app/components/BreakingNews";
+import PoliticalNews from "./app/components/PoliticalNews";
 import TechNews from "./app/components/TechNews";
-
-import data from "./fakeData";
+import EntertainmentNews from "./app/components/EntertainmentNews";
 
 export default function App() {
-  const breakingNews = data.filter((item) => item.category === "breaking-news");
-  const techNews = data.filter((item) => item.category === "tech");
-  const politicalNews = data.filter((item) => item.category === "political");
-  const entertainmentNews = data.filter(
-    (item) => item.category === "entertainment"
-  );
+  const [featuredNews, setFeaturedNews] = useState({});
+  const [breakingNews, setBreakingNews] = useState([]);
+  const [politicalNews, setPoliticalNews] = useState([]);
+  const [techNews, setTechNews] = useState([]);
+  const [entertainmentNews, setEntertainmentNews] = useState([]);
+  const qty = 5;
+
+  const filterFeatured = (data) => {
+    return [...data].filter((item) => item.featured === "on").reverse()[0];
+  };
+
+  const filterByCategory = (data, category) => {
+    const result = data
+      .filter((item) => item.category === category)
+      .reverse()
+      .splice(0, qty);
+
+    if (result.length) {
+      result.push({ type: "viewMore", category: category });
+    }
+
+    console.log(result);
+    return result;
+  };
+
+  const filterMultipleNews = async () => {
+    const allNews = await newsApi.getAll();
+    setFeaturedNews(filterFeatured);
+    setBreakingNews(filterByCategory(allNews, "breaking-news"));
+    setPoliticalNews(filterByCategory(allNews, "political"));
+    setEntertainmentNews(filterByCategory(allNews, "entertainment"));
+    setTechNews(filterByCategory(allNews, "tech"));
+  };
+
+  useEffect(() => {
+    filterMultipleNews();
+  }, []);
+
   return (
     <Screen>
       <SearchBar />
-      <FeaturedNews
-        item={{
-          id: "2",
-          title: "This is the title no two.",
-          desc: "Desc is the short form of description and this format is the actual same as our real database.",
-          thumbnail: "http://lorempixel.com/400/200/",
-          category: "breaking-news",
-        }}
-      />
+      <FeaturedNews item={featuredNews} />
       <BreakingNews data={breakingNews} />
       <PoliticalNews data={politicalNews} />
       <TechNews data={techNews} />
